@@ -3,6 +3,7 @@ import 'package:conversio/utils/spacing.dart';
 import 'package:conversio/utils/textstyle.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
 
 import 'login.dart';
@@ -15,6 +16,17 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  ValueNotifier<bool> isObscureA = ValueNotifier<bool>(true);
+  ValueNotifier<bool> isObscureB = ValueNotifier<bool>(true);
+
+  void toggleObscureA() {
+    isObscureA.value = !isObscureA.value;
+  }
+
+  void toggleObscureB() {
+    isObscureB.value = !isObscureB.value;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,31 +47,70 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextFormField(
+                    keyboardType: TextInputType.emailAddress,
+                    style: kTextStyle(context: context, size: 15),
                     decoration: InputDecoration(
                       hintText: "email",
+                      hintStyle: GoogleFonts.raleway(
+                        color: Colors.grey,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
                   ),
                   addVerticalSpacing(10),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: "password",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                  ),
+                  ValueListenableBuilder(
+                      valueListenable: isObscureA,
+                      builder: (context, value, child) {
+                        return TextFormField(
+                          obscureText: value,
+                          style: kTextStyle(context: context, size: 15),
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                toggleObscureA();
+                              },
+                              icon: Icon(value
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                            ),
+                            hintText: "password",
+                            hintStyle: GoogleFonts.raleway(
+                              color: Colors.grey,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                        );
+                      }),
                   addVerticalSpacing(10),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: "confirm password",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                  ),
+                  ValueListenableBuilder(
+                      valueListenable: isObscureB,
+                      builder: (context, value, child) {
+                        return TextFormField(
+                          obscureText: value,
+                          style: kTextStyle(context: context, size: 15),
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                toggleObscureB();
+                              },
+                              icon: Icon(value
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                            ),
+                            hintText: "confirm password",
+                            hintStyle: GoogleFonts.raleway(
+                              color: Colors.grey,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                        );
+                      }),
                 ],
               ),
               ElevatedButton(
