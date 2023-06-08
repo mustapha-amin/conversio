@@ -39,12 +39,14 @@ dependencies:
   firebase_auth:
   cloud_firestore:
   firebase_messaging:
-  firebase_storage:
-  provider:
-  intl:
+  firebase_storage: ^11.2.2
+  provider: ^6.0.5
+  intl: ^0.18.1
   google_fonts:
-  fpdart:
   shared_preferences: ^2.1.1
+  sizer: ^2.0.15
+  toast: ^0.3.0
+  fluttertoast: ^8.2.2
 
 dev_dependencies:
   flutter_test:
