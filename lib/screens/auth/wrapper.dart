@@ -1,6 +1,7 @@
 import 'package:conversio/screens/auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../home.dart';
 
@@ -9,15 +10,11 @@ class Wrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    return StreamBuilder(
-      stream: firebaseAuth.authStateChanges(),
-      builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        return Home();
-      } else {
-        return LoginScreen();
-      }
-    });
+    var user = Provider.of<User?>(context);
+    if (user != null) {
+      return const Home();
+    } else {
+      return const LoginScreen();
+    }
   }
 }
