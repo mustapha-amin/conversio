@@ -17,8 +17,22 @@ class DatabaseService {
     firestore
         .collection(usersCollection)
         .doc(AuthService.userid)
-        .collection("information")
-        .doc()
         .set(user.toJson());
   }
+
+  Stream<User> getUserInfo() {
+    return firestore
+        .collection(usersCollection)
+        .doc(AuthService.userid)
+        .snapshots()
+        .map((e) => User.fromJson(e.data()!));
+  }
+
+  Stream<List<User>> getUsers() {
+    return firestore
+        .collection(usersCollection)
+        .snapshots()
+        .map((snap) => snap.docs.map((e) => User.fromJson(e.data())).toList());
+  }
+  
 }

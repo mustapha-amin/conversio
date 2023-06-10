@@ -1,4 +1,6 @@
 import 'package:conversio/pallette.dart';
+import 'package:conversio/services/database.dart';
+import 'models/user.dart' as custom;
 import 'package:conversio/providers/auth_provider.dart';
 import 'package:conversio/providers/auth_status.dart';
 import 'package:conversio/providers/theme_provider.dart';
@@ -30,6 +32,10 @@ Future<void> main() async {
           value: AuthService.authStateChanges,
           initialData: null,
         ),
+        StreamProvider<custom.User?>.value(
+          value: DatabaseService().getUserInfo(), 
+         initialData: null,
+        )
       ],
       child: Sizer(
         builder: (context, _, __) {
