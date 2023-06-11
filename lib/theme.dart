@@ -1,5 +1,7 @@
 import 'package:conversio/pallette.dart';
+import 'package:conversio/utils/textstyle.dart';
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class AppTheme {
   static ThemeData themeData(bool isDark, BuildContext context) {
@@ -14,7 +16,15 @@ class AppTheme {
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       )),
-      appBarTheme: const AppBarTheme(elevation: 0.0),
+      appBarTheme: AppBarTheme(
+        elevation: 0.0,
+        color: isDark ? Colors.grey[900] : Colors.grey[100],
+        titleTextStyle: kTextStyle(
+          context: context,
+          size: 18.sp,
+        ),
+        foregroundColor: isDark ? Colors.white : Colors.black,
+      ),
       dialogTheme: DialogTheme(
         backgroundColor: isDark
             ? AppColors.darkScaffoldBgColor

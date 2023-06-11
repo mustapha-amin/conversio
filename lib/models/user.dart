@@ -1,13 +1,13 @@
-class User {
+class ConversioUser {
   String? id;
   String? name;
   String? email;
   String? bio;
 
-  User({this.id, this.name, this.bio, this.email});
+  ConversioUser({this.id, this.name, this.bio, this.email});
 
-  static User fromJson(Map<String, dynamic> json) {
-    return User(
+  static ConversioUser fromJson(Map<String, dynamic> json) {
+    return ConversioUser(
       id: json['id'],
       name: json['name'],
       email: json['email'],

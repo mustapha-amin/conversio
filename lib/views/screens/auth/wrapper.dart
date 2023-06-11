@@ -4,9 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../home.dart';
-import 'login.dart';
-
 class Wrapper extends StatelessWidget {
   const Wrapper({super.key});
 
@@ -14,7 +11,7 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     var user = Provider.of<User?>(context);
     if (user != null) {
-      return UserProfile();
+      return const UserProfile();
     } else {
       return const Authenticate();
     }

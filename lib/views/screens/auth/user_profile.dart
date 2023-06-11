@@ -107,7 +107,7 @@ class _UserProfileState extends State<UserProfile> {
                       width: 100.w,
                       child: ElevatedButton(
                         onPressed: () {
-                          databaseService.createUser(User(
+                          databaseService.createUser(ConversioUser(
                             id: AuthService.userid,
                             name: usernameController.text.trim(),
                             email: AuthService.user!.email,
@@ -115,7 +115,7 @@ class _UserProfileState extends State<UserProfile> {
                           ));
                           Navigator.pushReplacement(context,
                               MaterialPageRoute(builder: (context) {
-                            return Home();
+                            return const Home();
                           }));
                         },
                         child: const Text("Proceed"),
