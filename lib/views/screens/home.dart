@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../shared/alert_dialog.dart';
+import '../shared/chat_tile.dart';
 import '../shared/drawer.dart';
 
 class Home extends StatefulWidget {
@@ -46,8 +47,9 @@ class _HomeState extends State<Home> {
             ),
             drawer: HomeDrawer(user: user),
             body: StreamBuilder<List<ConversioUser>>(
-                stream: DatabaseService().getUsers(),
-                builder: (context, snapshot) {
+              stream: DatabaseService().getUsers(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
                   List<ConversioUser> users = snapshot.data!;
                   return users.isEmpty
                       ? Center(
@@ -56,55 +58,32 @@ class _HomeState extends State<Home> {
                             style: kTextStyle(context: context, size: 20),
                           ),
                         )
-                      : ListView.separated(
-                          separatorBuilder: (context, index) {
-                            return Divider(
-                              color: Colors.grey,
-                            );
-                          },
-                          itemCount: users.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
-                                onTap: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return MessageScreen(user: users[index]);
-                                  }));
+                      : Column(
+                          children: [
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: users.length,
+                                itemBuilder: (context, index) {
+                                  return ChatTile(user: users[index]);
                                 },
-                                leading: CircleAvatar(
-                                  backgroundColor:
-                                      context.watch<ThemeProvider>().isDark
-                                          ? Colors.grey[900]!
-                                          : Colors.grey[300],
-                                  child: Icon(
-                                    Icons.person,
-                                    color: context.watch<ThemeProvider>().isDark
-                                        ? Colors.grey
-                                        : Colors.grey[700],
-                                  ),
-                                ),
-                                title: Text(
-                                  users[index].name!,
-                                  style: kTextStyle(
-                                    context: context,
-                                    size: 13.sp,
-                                  ),
-                                ),
                               ),
-                            );
-                          },
+                            ),
+                          ],
                         );
-                }),
-          );
-        } else {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
             ),
           );
         }
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
       },
     );
   }

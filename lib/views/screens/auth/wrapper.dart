@@ -1,3 +1,4 @@
+import 'package:conversio/services/auth_service.dart';
 import 'package:conversio/views/screens/auth/authenticate.dart';
 import 'package:conversio/views/screens/auth/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,11 +10,15 @@ class Wrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var user = Provider.of<User?>(context);
-    if (user != null) {
-      return const UserProfile();
-    } else {
-      return const Authenticate();
-    }
+    return StreamBuilder(
+      stream: AuthService.authStateChanges,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return UserProfile();
+        } else {
+          return const Authenticate();
+        }
+      },
+    );
   }
 }

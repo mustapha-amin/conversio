@@ -48,6 +48,20 @@ class HomeDrawer extends StatelessWidget {
               ],
             ),
           ),
+          SwitchListTile(
+            title: Text(
+              "Dark mode",
+              style: kTextStyle(context: context, size: 14.sp),
+            ),
+            value: context.watch<ThemeProvider>().isDark,
+            onChanged: (_) => context.read<ThemeProvider>().toggleTheme(),
+          ),
+          ListTile(
+            title: Text(
+              "Edit profile",
+              style: kTextStyle(context: context, size: 14.sp),
+            ),
+          ),
           ListTile(
             title: Text(
               "Log out",
@@ -70,14 +84,6 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ]);
             },
-          ),
-          SwitchListTile(
-            title: Text(
-              "Dark mode",
-              style: kTextStyle(context: context, size: 14.sp),
-            ),
-            value: context.watch<ThemeProvider>().isDark,
-            onChanged: (_) => context.read<ThemeProvider>().toggleTheme(),
           )
         ],
       ),

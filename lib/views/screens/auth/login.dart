@@ -123,17 +123,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                       onPressed: () {
-                        authProvider
-                            .logIn(
-                              context,
-                              _emailController.text,
-                              _passwordController.text,
-                            )
-                            .whenComplete(() =>
-                                Navigator.pushReplacement(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return const Wrapper();
-                                })));
+                        authProvider.logIn(
+                          context,
+                          _emailController.text,
+                          _passwordController.text,
+                        );
                       },
                       child: const Text("Log in"),
                     ),

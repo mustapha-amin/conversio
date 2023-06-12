@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conversio/models/user.dart';
 import 'package:conversio/services/auth_service.dart';
+import 'package:conversio/utils/enums.dart';
 
 import '../models/message.dart';
 
@@ -54,32 +55,34 @@ class DatabaseService {
 
     final docSnap1 = await senderMessageDoc.get();
     docSnap1.exists
-        ? senderMessageDoc.update({
+        ? await senderMessageDoc.update({
             'messages': FieldValue.arrayUnion([message.toJson()])
           })
-        : senderMessageDoc.set({
+        : await senderMessageDoc.set({
             'messages': [message.toJson()]
           });
 
     final docSnap2 = await receiverMessageDoc.get();
     docSnap2.exists
-        ? receiverMessageDoc.update({
+        ? await receiverMessageDoc.update({
             'messages': FieldValue.arrayUnion([message.toJson()])
           })
-        : receiverMessageDoc.set({
+        : await receiverMessageDoc.set({
             'messages': [message.toJson()]
           });
   }
 
   Stream<List<Message>> getMessages(String? receiverId) {
-    return firestore
+    final docStream = firestore
         .collection(usersCollection)
         .doc(AuthService.userid)
         .collection(messagesCollection)
         .doc('messagesWith$receiverId')
-        .snapshots()
-        .map((snap) => Message.fromJson(snap.data()!))
+        .snapshots();
+    Stream<List<Message>> messages = docStream
+        .map((snap) => Message.fromJson(snap.data()!['messages']))
         .toList()
         .asStream();
+    return messages;
   }
 }

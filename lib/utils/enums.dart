@@ -1,4 +1,4 @@
-enum Status {
-  idle,
-  loading,
+enum MessageType {
+  outgoing,
+  incoming,
 }

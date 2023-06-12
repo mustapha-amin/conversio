@@ -3,7 +3,9 @@ import 'package:conversio/models/user.dart';
 import 'package:conversio/pallette.dart';
 import 'package:conversio/services/auth_service.dart';
 import 'package:conversio/services/database.dart';
+import 'package:conversio/utils/textstyle.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
 
 class MessageScreen extends StatefulWidget {
@@ -32,55 +34,63 @@ class _MessageScreenState extends State<MessageScreen> {
           ],
         ),
       ),
-      body: StreamBuilder<List<Message>>(
-          stream: DatabaseService().getMessages(widget.user!.id),
-          builder: (context, snapshot) {
-            return ListView(
-              children: [
-                ListTile()
-              ],
-            );
-          }),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: SizedBox(
-          height: 7.h,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 85.w,
-                child: TextField(
-                  textAlign: TextAlign.justify,
-                  maxLines: 3,
-                  controller: messageController,
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(10),
-                    hintText: "Message",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<List<Message>>(
+              stream: DatabaseService().getMessages(widget.user!.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<Message> messages = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(messages[index].content!),
+                      );
+                    },
+                  );
+                } else {
+                  return Center(
+                    child: Text(
+                      "No messages yet",
+                      style: kTextStyle(context: context, size: 20.sp),
                     ),
+                  );
+                }
+              },
+            ),
+          ),
+          SizedBox(
+            height: 10.h,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: messageController,
+                decoration: InputDecoration(
+                  fillColor: Colors.grey[200],
+                  filled: true,
+                  hintText: "Type a message",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      DatabaseService().sendMessage(Message(
+                        content: messageController.text,
+                        senderId: AuthService.userid,
+                        receiverId: widget.user!.id,
+                        timeSent: DateTime.now(),
+                      ));
+                    },
+                    icon: const Icon(Icons.send),
                   ),
                 ),
+                textAlignVertical: TextAlignVertical.center,
               ),
-              SizedBox(
-                width: 10.w,
-                child: IconButton(
-                  color: AppColors.accent,
-                  icon: Icon(Icons.send),
-                  onPressed: () {
-                    DatabaseService().sendMessage(Message(
-                      content: messageController.text,
-                      senderId: AuthService.userid,
-                      receiverId: widget.user!.id,
-                      timeSent: DateTime.now(),
-                    ));
-                  },
-                ),
-              )
-            ],
-          ),
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

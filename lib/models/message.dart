@@ -1,3 +1,5 @@
+import 'package:conversio/utils/enums.dart';
+
 class Message {
   String? content;
   String? senderId;
