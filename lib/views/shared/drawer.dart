@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:conversio/views/screens/fullscreen_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -30,20 +33,35 @@ class HomeDrawer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 15.w,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return FullScreenImage(
+                        imgUrl: user.profileImgUrl,
+                        heroTag: user.id,
+                      );
+                    }));
+                  },
+                  child: Hero(
+                    tag: user.id!,
+                    child: CircleAvatar(
+                      radius: 35.sp,
+                      backgroundImage: NetworkImage(user.profileImgUrl!),
+                    ),
+                  ),
                 ),
                 Text(
                   user.name!,
                   style: kTextStyle(
                     context: context,
-                    size: 17,
+                    size: 15,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
                   user.bio!,
-                  style: kTextStyle(context: context, size: 15),
+                  style: kTextStyle(context: context, size: 13),
                 )
               ],
             ),
@@ -51,7 +69,7 @@ class HomeDrawer extends StatelessWidget {
           SwitchListTile(
             title: Text(
               "Dark mode",
-              style: kTextStyle(context: context, size: 14.sp),
+              style: kTextStyle(context: context, size: 14),
             ),
             value: context.watch<ThemeProvider>().isDark,
             onChanged: (_) => context.read<ThemeProvider>().toggleTheme(),
@@ -59,13 +77,13 @@ class HomeDrawer extends StatelessWidget {
           ListTile(
             title: Text(
               "Edit profile",
-              style: kTextStyle(context: context, size: 14.sp),
+              style: kTextStyle(context: context, size: 14),
             ),
           ),
           ListTile(
             title: Text(
               "Log out",
-              style: kTextStyle(context: context, size: 14.sp),
+              style: kTextStyle(context: context, size: 14),
             ),
             onTap: () async {
               alertDialog(context, "Log out", "Do you want to log out", [

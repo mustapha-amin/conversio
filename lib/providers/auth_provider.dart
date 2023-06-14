@@ -1,26 +1,25 @@
 import 'package:conversio/services/auth_service.dart';
-import 'package:conversio/utils/enums.dart';
 import 'package:conversio/views/shared/error_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthProvider extends ChangeNotifier {
-  bool _status = false;
+  bool _loadingStatus = false;
 
-  bool get status => _status;
+  bool get loadingStatus => _loadingStatus;
 
   Future<void> createAccount(
       BuildContext context, String email, String password) async {
-    _status = true;
+    _loadingStatus = true;
     notifyListeners();
     try {
       await AuthService.firebaseAuth
           .createUserWithEmailAndPassword(email: email.trim(), password: password.trim());
-      _status = false;
+      _loadingStatus = false;
       notifyListeners();
     } on FirebaseAuthException catch (e) {
       String error = '';
-      _status = false;
+      _loadingStatus = false;
       notifyListeners();
       if (e.code == 'email-already-in-use') {
         error = "email already in use";
@@ -35,16 +34,16 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logIn(
       BuildContext context, String email, String password) async {
-    _status = true;
+    _loadingStatus = true;
     notifyListeners();
     try {
       await AuthService.firebaseAuth
           .signInWithEmailAndPassword(email: email.trim(), password: password.trim());
-      _status = false;
+      _loadingStatus = false;
       notifyListeners();
     } on FirebaseAuthException catch (e) {
       String error = '';
-      _status = false;
+      _loadingStatus = false;
       notifyListeners();
       if (e.code == 'user-not-found') {
         error = "User not found";

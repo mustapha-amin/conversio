@@ -1,22 +1,33 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conversio/models/user.dart';
 import 'package:conversio/services/auth_service.dart';
 import 'package:conversio/utils/enums.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import '../models/message.dart';
 
 class DatabaseService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   final usersCollection = "users";
-  final messagesCollection = "messages";
+  final messagesCollection = "messagesCollection";
 
   Future<void> createUser(ConversioUser? userProfile) async {
-    await AuthService.user!.updateDisplayName(userProfile!.name);
+    final path = 'usersProfilePicture/${userProfile!.name!.split('.').last}';
+    final file = File(userProfile.profileImgUrl!);
+    final ref = firebaseStorage.ref().child(path);
+    await ref.putFile(file);
+    final imgUrl = await ref.getDownloadURL();
+    await AuthService.user!.updateDisplayName(userProfile.name);
+    await AuthService.user!.updatePhotoURL(imgUrl);
+
     ConversioUser user = ConversioUser(
       id: userProfile.id,
       name: userProfile.name,
       email: userProfile.email,
       bio: userProfile.bio,
+      profileImgUrl: imgUrl,
     );
     firestore
         .collection(usersCollection)
@@ -41,48 +52,29 @@ class DatabaseService {
   }
 
   Future<void> sendMessage(Message message) async {
-    final senderMessageDoc = firestore
+    // sender
+    firestore
         .collection(usersCollection)
-        .doc(AuthService.userid)
-        .collection(messagesCollection)
-        .doc('messagesWith${message.receiverId}');
+        .doc(message.senderId)
+        .collection('messagesWith${message.receiverId}')
+        .add(message.toJson());
 
-    final receiverMessageDoc = firestore
+    // receiver
+    firestore
         .collection(usersCollection)
         .doc(message.receiverId)
-        .collection(messagesCollection)
-        .doc('messagesWith${message.senderId}');
-
-    final docSnap1 = await senderMessageDoc.get();
-    docSnap1.exists
-        ? await senderMessageDoc.update({
-            'messages': FieldValue.arrayUnion([message.toJson()])
-          })
-        : await senderMessageDoc.set({
-            'messages': [message.toJson()]
-          });
-
-    final docSnap2 = await receiverMessageDoc.get();
-    docSnap2.exists
-        ? await receiverMessageDoc.update({
-            'messages': FieldValue.arrayUnion([message.toJson()])
-          })
-        : await receiverMessageDoc.set({
-            'messages': [message.toJson()]
-          });
+        .collection('messagesWith${message.senderId}')
+        .add(message.toJson());
   }
 
   Stream<List<Message>> getMessages(String? receiverId) {
-    final docStream = firestore
+    return firestore
         .collection(usersCollection)
         .doc(AuthService.userid)
-        .collection(messagesCollection)
-        .doc('messagesWith$receiverId')
-        .snapshots();
-    Stream<List<Message>> messages = docStream
-        .map((snap) => Message.fromJson(snap.data()!['messages']))
-        .toList()
-        .asStream();
-    return messages;
+        .collection('messagesWith$receiverId')
+        .orderBy('timeSent', descending: false)
+        .snapshots()
+        .map((snap) =>
+            snap.docs.map((e) => Message.fromJson(e.data())).toList());
   }
 }

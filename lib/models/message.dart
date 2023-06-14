@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conversio/utils/enums.dart';
 
 class Message {
@@ -13,7 +14,7 @@ class Message {
       content: json['content'],
       senderId: json['senderId'],
       receiverId: json['receiverId'],
-      timeSent: DateTime.parse(json['timeSent']),
+      timeSent:  (json['timeSent'] as Timestamp).toDate(),
     );
   }
 
@@ -24,5 +25,15 @@ class Message {
       'receiverId': receiverId,
       'timeSent': timeSent,
     };
+  }
+}
+
+class MessageList {
+  List<Message>? messages;
+
+  MessageList({this.messages});
+
+  factory MessageList.fromJson(Map<String, dynamic> json) {
+    return MessageList(messages: json['messages'] as List<Message>);
   }
 }

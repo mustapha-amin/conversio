@@ -1,9 +1,7 @@
 import 'package:conversio/services/auth_service.dart';
 import 'package:conversio/views/screens/auth/authenticate.dart';
 import 'package:conversio/views/screens/auth/user_profile.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class Wrapper extends StatelessWidget {
   const Wrapper({super.key});
@@ -14,7 +12,7 @@ class Wrapper extends StatelessWidget {
       stream: AuthService.authStateChanges,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return UserProfile();
+          return const UserProfile();
         } else {
           return const Authenticate();
         }

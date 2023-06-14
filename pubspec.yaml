@@ -45,8 +45,8 @@ dependencies:
   google_fonts:
   shared_preferences: ^2.1.1
   sizer: ^2.0.15
-  toast: ^0.3.0
-  fluttertoast: ^8.2.2
+  flutter_chat_bubble: ^2.0.2
+  image_picker: ^0.8.8
 
 dev_dependencies:
   flutter_test:

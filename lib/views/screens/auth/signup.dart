@@ -23,6 +23,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   late TextEditingController _confirmPasswordController;
+  final formKey = GlobalKey<FormState>();
   ValueNotifier<bool> isObscureA = ValueNotifier<bool>(true);
   ValueNotifier<bool> isObscureB = ValueNotifier<bool>(true);
 
@@ -47,7 +48,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     var authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: authProvider.status == true
+      body: authProvider.loadingStatus == true
           ? const Center(
               child: CircularProgressIndicator(
                 color: AppColors.primary,
@@ -56,15 +57,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
           : Padding(
               padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
               child: Form(
+                key: formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text("Create an account",
-                        style: kTextStyle(
-                          context: context,
-                          size: 25.sp,
-                          fontWeight: FontWeight.bold,
-                        )),
+                    Text(
+                      "Create an account",
+                      style: kTextStyle(
+                        context: context,
+                        size: 25.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -81,6 +85,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               borderRadius: BorderRadius.circular(15),
                             ),
                           ),
+                          validator: (val) =>
+                              val!.isEmpty ? "please enter your email" : null,
                         ),
                         addVerticalSpacing(10),
                         ValueListenableBuilder(
@@ -107,6 +113,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                 ),
+                                validator: (val) => val!.isEmpty
+                                    ? "please enter your password"
+                                    : null,
                               );
                             }),
                         addVerticalSpacing(10),
@@ -134,6 +143,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                 ),
+                                validator: (val) => val!.isEmpty
+                                    ? "please confirm your password"
+                                    : null,
                               );
                             }),
                       ],
@@ -151,7 +163,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                       onPressed: () {
-                        authProvider
+                        formKey.currentState!.validate() ? authProvider
                             .createAccount(
                               context,
                               _emailController.text,
@@ -161,7 +173,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 Navigator.pushReplacement(context,
                                     MaterialPageRoute(builder: (context) {
                                   return const Wrapper();
-                                })));
+                                }))) : null;
                       },
                       child: const Text("Create account"),
                     ),

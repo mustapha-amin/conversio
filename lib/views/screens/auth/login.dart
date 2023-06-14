@@ -24,6 +24,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
+  final _formkey = GlobalKey<FormState>();
   ValueNotifier<bool> isObscure = ValueNotifier<bool>(true);
 
   void toggleObscure() {
@@ -42,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
     var authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: authProvider.status == true
+      body: authProvider.loadingStatus == true
           ? const Center(
               child: CircularProgressIndicator(
                 color: AppColors.primary,
@@ -51,6 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
           : Padding(
               padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
               child: Form(
+                key: _formkey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -80,6 +82,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 borderRadius: BorderRadius.circular(15),
                               ),
                             ),
+                            validator: (val) =>
+                                val!.isEmpty ? "please enter your email" : null,
                           ),
                         ),
                         ValueListenableBuilder(
@@ -106,6 +110,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                 ),
+                                validator: (val) => val!.isEmpty
+                                    ? "please enter your password"
+                                    : null,
                               );
                             }),
                       ],
@@ -123,11 +130,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                       onPressed: () {
-                        authProvider.logIn(
-                          context,
-                          _emailController.text,
-                          _passwordController.text,
-                        );
+                        _formkey.currentState!.validate()
+                            ? authProvider.logIn(
+                                context,
+                                _emailController.text,
+                                _passwordController.text,
+                              )
+                            : null;
                       },
                       child: const Text("Log in"),
                     ),

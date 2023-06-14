@@ -7,9 +7,6 @@ import 'package:conversio/utils/textstyle.dart';
 import 'package:conversio/views/screens/message_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sizer/sizer.dart';
-
-import '../shared/alert_dialog.dart';
 import '../shared/chat_tile.dart';
 import '../shared/drawer.dart';
 
@@ -54,10 +51,9 @@ class _HomeState extends State<Home> {
                   return users.isEmpty
                       ? Center(
                           child: Text(
-                            "No users yet",
-                            style: kTextStyle(context: context, size: 20),
-                          ),
-                        )
+                          "No users yet",
+                          style: kTextStyle(context: context, size: 20),
+                        ))
                       : Column(
                           children: [
                             Expanded(
@@ -80,9 +76,7 @@ class _HomeState extends State<Home> {
           );
         }
         return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
+          body: Center(child: CircularProgressIndicator()),
         );
       },
     );

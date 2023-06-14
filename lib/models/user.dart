@@ -3,8 +3,9 @@ class ConversioUser {
   String? name;
   String? email;
   String? bio;
+  String? profileImgUrl;
 
-  ConversioUser({this.id, this.name, this.bio, this.email});
+  ConversioUser({this.id, this.name, this.bio, this.email, this.profileImgUrl});
 
   static ConversioUser fromJson(Map<String, dynamic> json) {
     return ConversioUser(
@@ -12,6 +13,7 @@ class ConversioUser {
       name: json['name'],
       email: json['email'],
       bio: json['bio'],
+      profileImgUrl: json['profileImgUrl'],
     );
   }
 
@@ -21,6 +23,7 @@ class ConversioUser {
       'name': name,
       'email': email,
       'bio': bio,
+      'profileImgUrl': profileImgUrl,
     };
   }
 }

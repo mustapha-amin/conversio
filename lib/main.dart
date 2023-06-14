@@ -31,13 +31,14 @@ Future<void> main() async {
         ),
         StreamProvider<User?>.value(
           value: AuthService.authStateChanges,
-          initialData: null,
+          initialData: FirebaseAuth.instance.currentUser,
         ),
       ],
       child: Sizer(
         builder: (context, _, __) {
           var themeStatus = Provider.of<ThemeProvider>(context).isDark;
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             home: const Wrapper(),
             theme: AppTheme.themeData(themeStatus, context),
           );
