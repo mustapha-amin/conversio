@@ -14,7 +14,8 @@ class DatabaseService {
   final messagesCollection = "messagesCollection";
 
   Future<void> createUser(ConversioUser? userProfile) async {
-    final path = 'usersProfilePicture/${userProfile!.name!.split('.').last}';
+    final path =
+        'usersProfilePicture/${userProfile!.name}/${userProfile.name!.split('.').last}';
     final file = File(userProfile.profileImgUrl!);
     final ref = firebaseStorage.ref().child(path);
     await ref.putFile(file);
@@ -57,14 +58,16 @@ class DatabaseService {
         .collection(usersCollection)
         .doc(message.senderId)
         .collection('messagesWith${message.receiverId}')
-        .add(message.toJson());
+        .doc(message.id)
+        .set(message.toJson());
 
     // receiver
     firestore
         .collection(usersCollection)
         .doc(message.receiverId)
         .collection('messagesWith${message.senderId}')
-        .add(message.toJson());
+        .doc(message.id)
+        .set(message.toJson());
   }
 
   Stream<List<Message>> getMessages(String? receiverId) {
@@ -72,9 +75,26 @@ class DatabaseService {
         .collection(usersCollection)
         .doc(AuthService.userid)
         .collection('messagesWith$receiverId')
-        .orderBy('timeSent', descending: false)
         .snapshots()
         .map((snap) =>
             snap.docs.map((e) => Message.fromJson(e.data())).toList());
+  }
+
+  Future<void> deleteMessage(Message message) async {
+    await firestore
+        .collection(usersCollection)
+        .doc(AuthService.userid)
+        .collection('messageWith${message.receiverId}')
+        .doc(message.id)
+        .delete();
+  }
+
+  void clearChat(String? id) {
+    firestore
+        .collection(usersCollection)
+        .doc(AuthService.userid)
+        .collection('messageWith$id')
+        .snapshots()
+        .map((snap) => snap.docs.clear());
   }
 }

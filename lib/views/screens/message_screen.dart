@@ -1,3 +1,4 @@
+import 'package:conversio/pallette.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:conversio/models/message.dart';
@@ -24,6 +25,7 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   final TextEditingController messageController = TextEditingController();
+  final scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +116,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 7),
                           child: ListView.builder(
+                            controller: scrollController,
                             itemCount: snapshot.data!.length,
                             itemBuilder: (context, index) {
                               return CustomChatBubble(
@@ -124,37 +127,47 @@ class _MessageScreenState extends State<MessageScreen> {
                         ),
                 );
               } else {
-                return Center(
-                  child: Text(
-                    "No messages yet",
-                    style: kTextStyle(context: context, size: 15),
-                  ),
-                );
+                return const Center(child: CircularProgressIndicator());
               }
             },
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
-              controller: messageController,
+              style: GoogleFonts.raleway(
+                fontSize: 14.sp,
+                color: Colors.white,
+              ),
               keyboardType: TextInputType.multiline,
-              maxLines: 1,
+              minLines: 1,
+              maxLines: 5,
+              controller: messageController,
               decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(15),
+                ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 5,
                 ),
-                fillColor: Colors.grey[200],
+                fillColor: Colors.grey[700],
                 filled: true,
                 hintText: "Type a message",
                 border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(15),
                 ),
-                hintStyle: GoogleFonts.raleway(fontSize: 14.sp),
+                hintStyle:
+                    GoogleFonts.raleway(fontSize: 14.sp, color: Colors.white),
                 suffixIcon: IconButton(
                   onPressed: () {
                     messageController.text.isEmpty
-                        ? log(widget.user!.id.toString())
+                        ? null
                         : DatabaseService().sendMessage(
                             Message(
                               content: messageController.text,
@@ -165,7 +178,10 @@ class _MessageScreenState extends State<MessageScreen> {
                           );
                     messageController.clear();
                   },
-                  icon: const Icon(Icons.send),
+                  icon: const Icon(
+                    Icons.send,
+                    color: AppColors.accent,
+                  ),
                 ),
               ),
               textAlignVertical: TextAlignVertical.center,
