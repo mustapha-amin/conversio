@@ -13,8 +13,7 @@ class DatabaseService {
   final messagesCollection = "messagesCollection";
 
   Future<void> createUser(ConversioUser? userProfile) async {
-    final path =
-        'usersProfilePicture/${userProfile!.name}/${userProfile.name!.split('.').last}';
+    final path = 'usersProfilePicture/${userProfile!.name}/';
     final file = File(userProfile.profileImgUrl!);
     final ref = firebaseStorage.ref().child(path);
     await ref.putFile(file);
@@ -28,6 +27,40 @@ class DatabaseService {
         .doc(AuthService.userid)
         .set(user.toJson());
   }
+
+  void updateUserName(String? name) async {
+    await firestore.collection(usersCollection).doc(AuthService.userid).update({
+      'name': name,
+    });
+    await AuthService.user!.updateDisplayName(name);
+  }
+
+  void updateEmail(String? email) async {
+    await firestore.collection(usersCollection).doc(AuthService.userid).update({
+      'email': email,
+    });
+    await AuthService.user!.updateEmail(email!);
+  }
+
+  void updateBio(String? bio) async {
+    await firestore.collection(usersCollection).doc(AuthService.userid).update({
+      'bio': bio,
+    });
+  }
+
+  void updateProfilePic(String imgPath) async {
+    final path =
+        'usersProfilePicture/${AuthService.user!.displayName}/$imgPath';
+    final file = File(imgPath);
+    final ref = firebaseStorage.ref().child(path);
+    await ref.putFile(file);
+    final imgUrl = await ref.getDownloadURL();
+    await AuthService.user!.updatePhotoURL(imgUrl);
+    await firestore.collection(usersCollection).doc(AuthService.userid).update({
+      'imgUrl': imgUrl,
+    });
+  }
+
 
   Stream<ConversioUser> getUserInfo() {
     return firestore

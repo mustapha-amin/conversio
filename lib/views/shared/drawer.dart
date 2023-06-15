@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:conversio/views/screens/fullscreen_image.dart';
+import 'package:conversio/views/screens/update_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -35,6 +36,7 @@ class HomeDrawer extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
+                    Scaffold.of(context).closeDrawer();
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       return FullScreenImage(
@@ -79,6 +81,13 @@ class HomeDrawer extends StatelessWidget {
               "Edit profile",
               style: kTextStyle(context: context, size: 14),
             ),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return UpdateProfile(
+                  user: user,
+                );
+              }));
+            },
           ),
           ListTile(
             title: Text(
