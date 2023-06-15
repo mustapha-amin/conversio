@@ -127,7 +127,8 @@ class _MessageScreenState extends State<MessageScreen> {
                         ),
                 );
               } else {
-                return const Center(child: CircularProgressIndicator());
+                return const Expanded(
+                    child: Center(child: CircularProgressIndicator()));
               }
             },
           ),
@@ -136,7 +137,7 @@ class _MessageScreenState extends State<MessageScreen> {
             child: TextField(
               style: GoogleFonts.raleway(
                 fontSize: 14.sp,
-                color: Colors.white,
+                color: Colors.black,
               ),
               keyboardType: TextInputType.multiline,
               minLines: 1,
@@ -155,7 +156,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   horizontal: 10,
                   vertical: 5,
                 ),
-                fillColor: Colors.grey[700],
+                fillColor: Colors.grey[200],
                 filled: true,
                 hintText: "Type a message",
                 border: OutlineInputBorder(
@@ -163,7 +164,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 hintStyle:
-                    GoogleFonts.raleway(fontSize: 14.sp, color: Colors.white),
+                    GoogleFonts.raleway(fontSize: 14.sp, color: Colors.black),
                 suffixIcon: IconButton(
                   onPressed: () {
                     messageController.text.isEmpty

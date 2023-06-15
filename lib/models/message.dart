@@ -7,7 +7,9 @@ class Message {
   String? receiverId;
   DateTime? timeSent;
 
-  Message({String? id, this.content, this.senderId, this.receiverId, this.timeSent}) : id = DateTime.now().microsecondsSinceEpoch.toString();
+  Message(
+      {String? id, this.content, this.senderId, this.receiverId, this.timeSent})
+      : id = DateTime.now().microsecondsSinceEpoch.toString();
 
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
@@ -29,22 +31,19 @@ class Message {
     };
   }
 
-  @override
-  bool operator ==(covariant Object other) {
-    return identical(this, other) ||
-        other is Message &&
-            id == other.id &&
-            content == other.content &&
-            senderId == other.senderId &&
-            receiverId == other.receiverId &&
-            timeSent == other.timeSent;
+  Message copyWith({
+    String? id,
+    String? content,
+    String? senderId,
+    String? receiverId,
+    DateTime? timeSent,
+  }) {
+    return Message(
+      id: id ?? this.id,
+      content: content ?? this.content,
+      senderId: senderId ?? this.senderId,
+      receiverId: receiverId ?? this.receiverId,
+      timeSent: timeSent ?? this.timeSent,
+    );
   }
-
-  @override
-  int get hashCode =>
-      id.hashCode ^
-      content.hashCode ^
-      senderId.hashCode ^
-      receiverId.hashCode ^
-      timeSent.hashCode;
 }

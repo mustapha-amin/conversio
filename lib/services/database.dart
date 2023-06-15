@@ -1,9 +1,8 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:conversio/models/story.dart';
 import 'package:conversio/models/user.dart';
 import 'package:conversio/services/auth_service.dart';
-import 'package:conversio/utils/enums.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../models/message.dart';
 
@@ -23,13 +22,7 @@ class DatabaseService {
     await AuthService.user!.updateDisplayName(userProfile.name);
     await AuthService.user!.updatePhotoURL(imgUrl);
 
-    ConversioUser user = ConversioUser(
-      id: userProfile.id,
-      name: userProfile.name,
-      email: userProfile.email,
-      bio: userProfile.bio,
-      profileImgUrl: imgUrl,
-    );
+    ConversioUser user = userProfile.copyWith(profileImgUrl: imgUrl);
     firestore
         .collection(usersCollection)
         .doc(AuthService.userid)
@@ -54,18 +47,22 @@ class DatabaseService {
 
   Future<void> sendMessage(Message message) async {
     // sender
-    firestore
+    await firestore
         .collection(usersCollection)
         .doc(message.senderId)
-        .collection('messagesWith${message.receiverId}')
+        .collection('allMessages')
+        .doc('messagesWith${message.receiverId}')
+        .collection('messages')
         .doc(message.id)
         .set(message.toJson());
 
     // receiver
-    firestore
+    await firestore
         .collection(usersCollection)
-        .doc(message.receiverId)
-        .collection('messagesWith${message.senderId}')
+        .doc(message.senderId)
+        .collection('allMessages')
+        .doc('messagesWith${message.receiverId}')
+        .collection('messages')
         .doc(message.id)
         .set(message.toJson());
   }
@@ -74,7 +71,9 @@ class DatabaseService {
     return firestore
         .collection(usersCollection)
         .doc(AuthService.userid)
-        .collection('messagesWith$receiverId')
+        .collection('allMessages')
+        .doc('messagesWith$receiverId')
+        .collection('messages')
         .snapshots()
         .map((snap) =>
             snap.docs.map((e) => Message.fromJson(e.data())).toList());
@@ -84,17 +83,37 @@ class DatabaseService {
     await firestore
         .collection(usersCollection)
         .doc(AuthService.userid)
-        .collection('messageWith${message.receiverId}')
+        .collection('allMessages')
+        .doc('messagesWith${message.receiverId}')
+        .collection('messages')
         .doc(message.id)
         .delete();
   }
 
-  void clearChat(String? id) {
+  void clearChat(String? receiverId) async {
+    final data = await firestore
+        .collection(usersCollection)
+        .doc(AuthService.userid)
+        .collection('allMessages')
+        .doc('messagesWith$receiverId')
+        .collection('messages')
+        .get();
+    data.docs.clear();
+  }
+
+  void uploadStory(Story? story) async {
+    final path =
+        'usersStories/${AuthService.user!.displayName}/${story!.imgUrl}';
+    final file = File(story.imgUrl!);
+    final ref = firebaseStorage.ref().child(path);
+    await ref.putFile(file);
+    final imgUrl = await ref.getDownloadURL();
+    Story storyUpload = story.copyWith(imgUrl: imgUrl);
     firestore
         .collection(usersCollection)
         .doc(AuthService.userid)
-        .collection('messageWith$id')
-        .snapshots()
-        .map((snap) => snap.docs.clear());
+        .collection('stories')
+        .doc(storyUpload.id)
+        .set(storyUpload.toJson());
   }
 }
