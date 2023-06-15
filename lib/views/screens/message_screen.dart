@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:conversio/pallette.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +12,6 @@ import 'package:conversio/utils/textstyle.dart';
 import 'package:conversio/views/shared/chat_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
-import 'dart:developer';
 import 'package:conversio/providers/theme_provider.dart';
 
 import 'fullscreen_image.dart';
@@ -25,7 +26,18 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   final TextEditingController messageController = TextEditingController();
-  final scrollController = ScrollController();
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +63,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
                               return FullScreenImage(
-                                imgUrl: widget.user!.profileImgUrl,
+                                user: widget.user,
                                 heroTag: widget.user!.id,
                               );
                             }));
@@ -97,6 +109,67 @@ class _MessageScreenState extends State<MessageScreen> {
             ],
           ),
         ),
+        actions: [
+          PopupMenuButton(itemBuilder: (context) {
+            return [
+              PopupMenuItem(
+                child: Text(
+                  "Clear chat",
+                ),
+                onTap: () {
+                  Future.delayed(Duration.zero, () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(
+                            "Clear chats",
+                            style: kTextStyle(context: context, size: 15),
+                          ),
+                          content: Text(
+                            "Do you want to delete all your conversations",
+                            style: kTextStyle(
+                              context: context,
+                              size: 12,
+                            ),
+                          ),
+                          actions: [
+                            SizedBox(
+                              width: 25.w,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  DatabaseService().clearChat(widget.user!.id);
+                                  log(widget.user!.id.toString());
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text(
+                                  "Yes",
+                                  style: kTextStyle(context: context, size: 10),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 25.w,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text(
+                                  "No",
+                                  style: kTextStyle(context: context, size: 10),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  });
+                },
+              )
+            ];
+          })
+        ],
         centerTitle: true,
       ),
       body: Column(
@@ -116,10 +189,11 @@ class _MessageScreenState extends State<MessageScreen> {
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 7),
                           child: ListView.builder(
-                            controller: scrollController,
+                            controller: _scrollController,
                             itemCount: snapshot.data!.length,
                             itemBuilder: (context, index) {
                               return CustomChatBubble(
+                                id: snapshot.data![index].id!,
                                 message: snapshot.data![index],
                               );
                             },

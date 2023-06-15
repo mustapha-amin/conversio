@@ -11,6 +11,9 @@ class Wrapper extends StatelessWidget {
     return StreamBuilder(
       stream: AuthService.authStateChanges,
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold();
+        }
         if (snapshot.hasData) {
           return const UserProfile();
         } else {

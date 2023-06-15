@@ -1,5 +1,3 @@
-import 'message.dart';
-
 class ConversioUser {
   String? id;
   String? name;

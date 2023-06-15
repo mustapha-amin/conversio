@@ -36,7 +36,7 @@ class ChatTile extends StatelessWidget {
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return FullScreenImage(
-                  imgUrl: user.profileImgUrl, heroTag: user.id);
+                  user: user, heroTag: user.id);
             }));
           },
           child: Hero(

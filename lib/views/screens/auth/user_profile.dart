@@ -1,13 +1,11 @@
 import 'package:conversio/models/user.dart';
 import 'package:conversio/pallette.dart';
-import 'package:conversio/providers/theme_provider.dart';
 import 'package:conversio/services/auth_service.dart';
 import 'package:conversio/services/database.dart';
 import 'package:conversio/utils/spacing.dart';
 import 'package:conversio/utils/textstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';

@@ -1,10 +1,12 @@
+import 'package:conversio/models/user.dart';
+import 'package:conversio/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 class FullScreenImage extends StatelessWidget {
-  String? imgUrl;
+  ConversioUser? user;
   String? heroTag;
-  FullScreenImage({this.imgUrl, this.heroTag, super.key});
+  FullScreenImage({this.user, this.heroTag, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,11 +15,11 @@ class FullScreenImage extends StatelessWidget {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         actions: [
-          IconButton(
+          user!.id == AuthService.userid ?  IconButton(
             onPressed: () {},
             icon: const Icon(Icons.edit),
             tooltip: 'update picture',
-          ),
+          ) : const SizedBox(),
         ],
       ),
       body: Hero(
@@ -32,7 +34,7 @@ class FullScreenImage extends StatelessWidget {
               height: 60.h,
               width: 100.w,
               child: Image.network(
-                imgUrl!,
+                user!.profileImgUrl!,
                 fit: BoxFit.cover,
                 filterQuality: FilterQuality.high,
               ),

@@ -38,7 +38,7 @@ class HomeDrawer extends StatelessWidget {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       return FullScreenImage(
-                        imgUrl: user.profileImgUrl,
+                        user: user,
                         heroTag: user.id,
                       );
                     }));

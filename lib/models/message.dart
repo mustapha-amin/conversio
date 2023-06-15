@@ -7,9 +7,13 @@ class Message {
   String? receiverId;
   DateTime? timeSent;
 
-  Message(
-      {String? id, this.content, this.senderId, this.receiverId, this.timeSent})
-      : id = DateTime.now().microsecondsSinceEpoch.toString();
+  Message({
+    this.id,
+    this.content,
+    this.senderId,
+    this.receiverId,
+    this.timeSent,
+  });
 
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(

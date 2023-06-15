@@ -46,6 +46,7 @@ class DatabaseService {
   }
 
   Future<void> sendMessage(Message message) async {
+    message.id = DateTime.now().microsecondsSinceEpoch.toString();
     // sender
     await firestore
         .collection(usersCollection)
@@ -59,9 +60,9 @@ class DatabaseService {
     // receiver
     await firestore
         .collection(usersCollection)
-        .doc(message.senderId)
+        .doc(message.receiverId)
         .collection('allMessages')
-        .doc('messagesWith${message.receiverId}')
+        .doc('messagesWith${message.senderId}')
         .collection('messages')
         .doc(message.id)
         .set(message.toJson());
@@ -80,25 +81,27 @@ class DatabaseService {
   }
 
   Future<void> deleteMessage(Message message) async {
-    await firestore
+    final doc = firestore
         .collection(usersCollection)
         .doc(AuthService.userid)
         .collection('allMessages')
         .doc('messagesWith${message.receiverId}')
         .collection('messages')
-        .doc(message.id)
-        .delete();
+        .doc(message.id);
+    await doc.delete();
   }
 
   void clearChat(String? receiverId) async {
-    final data = await firestore
+    final collection = await firestore
         .collection(usersCollection)
         .doc(AuthService.userid)
         .collection('allMessages')
         .doc('messagesWith$receiverId')
         .collection('messages')
         .get();
-    data.docs.clear();
+    for (var doc in collection.docs) {
+      await doc.reference.delete();
+    }
   }
 
   void uploadStory(Story? story) async {
