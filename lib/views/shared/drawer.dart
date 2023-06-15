@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:conversio/views/screens/fullscreen_image.dart';
 import 'package:conversio/views/screens/update_profile.dart';
 import 'package:flutter/material.dart';

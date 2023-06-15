@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'package:flutter/services.dart';
 import 'package:conversio/models/message.dart';
 import 'package:conversio/providers/theme_provider.dart';
 import 'package:conversio/services/auth_service.dart';
@@ -94,6 +94,18 @@ class CustomChatBubble extends StatelessWidget {
                     ),
                   ),
                   ListTile(
+                    onTap: () async {
+                      await Clipboard.setData(
+                        ClipboardData(text: message.content!),
+                      );
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          duration: Duration(milliseconds: 500),
+                          content: Text("Copied to clipboard"),
+                        ),
+                      );
+                    },
                     title: Text(
                       "Copy to clipboard",
                       style: kTextStyle(

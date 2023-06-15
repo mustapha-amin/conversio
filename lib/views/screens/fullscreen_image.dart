@@ -14,13 +14,6 @@ class FullScreenImage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        actions: [
-          user!.id == AuthService.userid ?  IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.edit),
-            tooltip: 'update picture',
-          ) : const SizedBox(),
-        ],
       ),
       body: Hero(
         transitionOnUserGestures: true,

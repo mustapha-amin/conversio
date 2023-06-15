@@ -113,7 +113,7 @@ class _MessageScreenState extends State<MessageScreen> {
           PopupMenuButton(itemBuilder: (context) {
             return [
               PopupMenuItem(
-                child: Text(
+                child: const Text(
                   "Clear chat",
                 ),
                 onTap: () {

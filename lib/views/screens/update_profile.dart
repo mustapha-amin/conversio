@@ -177,7 +177,10 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     SizedBox(
                       width: 100.w,
                       child: ElevatedButton(
-                        onPressed: formKey.currentState!.validate() ? updateProfile : null,
+                        onPressed: () {
+                          updateProfile();
+                          Navigator.pop(context);
+                        },
                         child: const Text("Update"),
                       ),
                     )
