@@ -34,7 +34,7 @@ class _MessageScreenState extends State<MessageScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.position.animateTo(
-          _scrollController.position.maxScrollExtent + 300,
+          _scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 300),
           curve: Curves.bounceIn,
         );
@@ -212,7 +212,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 hintStyle:
                     GoogleFonts.raleway(fontSize: 14.sp, color: Colors.black),
                 suffixIcon: IconButton(
-                  onPressed: () {
+                  onPressed: () async {
                     messageController.text.isEmpty
                         ? null
                         : {
@@ -224,11 +224,18 @@ class _MessageScreenState extends State<MessageScreen> {
                                 timeSent: DateTime.now(),
                               ),
                             ),
-                            _scrollController.position.jumpTo(
-                              _scrollController.position.maxScrollExtent + 300,
-                            )
+                            messageController.clear(),
+                            await Future.delayed(
+                                const Duration(seconds: 1),
+                                () => _scrollController.position.animateTo(
+                                      _scrollController
+                                              .position.maxScrollExtent +
+                                          300,
+                                      duration:
+                                          const Duration(milliseconds: 100),
+                                      curve: Curves.bounceIn,
+                                    ))
                           };
-                    messageController.clear();
                   },
                   icon: const Icon(
                     Icons.send,

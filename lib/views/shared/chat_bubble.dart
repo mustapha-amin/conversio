@@ -8,6 +8,7 @@ import 'package:conversio/utils/textstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -134,29 +135,44 @@ class CustomChatBubble extends StatelessWidget {
               );
             });
       },
-      child: ChatBubble(
-        elevation: 0,
-        clipper: ChatBubbleClipper5(
-          type: message.senderId == AuthService.userid
-              ? BubbleType.sendBubble
-              : BubbleType.receiverBubble,
-        ),
-        alignment: message.senderId == AuthService.userid
-            ? Alignment.centerRight
-            : Alignment.centerLeft,
-        margin: const EdgeInsets.only(top: 20),
-        backGroundColor: message.senderId == AuthService.userid
-            ? Colors.blue
-            : Colors.grey[600],
-        child: Container(
-          constraints: BoxConstraints(
-            maxWidth: 70.w,
+      child: Column(
+        crossAxisAlignment: message.senderId == AuthService.userid
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
+        children: [
+          ChatBubble(
+            elevation: 0,
+            clipper: ChatBubbleClipper5(
+              type: message.senderId == AuthService.userid
+                  ? BubbleType.sendBubble
+                  : BubbleType.receiverBubble,
+            ),
+            alignment: message.senderId == AuthService.userid
+                ? Alignment.centerRight
+                : Alignment.centerLeft,
+            margin: const EdgeInsets.only(top: 20),
+            backGroundColor: message.senderId == AuthService.userid
+                ? Colors.blue
+                : Colors.grey[600],
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: 70.w,
+              ),
+              child: Text(
+                message.content!,
+                style:
+                    GoogleFonts.raleway(fontSize: 14.sp, color: Colors.white),
+              ),
+            ),
           ),
-          child: Text(
-            message.content!,
-            style: GoogleFonts.raleway(fontSize: 14.sp, color: Colors.white),
-          ),
-        ),
+          Text(
+            DateFormat(DateFormat.HOUR_MINUTE).format(message.timeSent!),
+            style: kTextStyle(
+              context: context,
+              size: 10,
+            ),
+          )
+        ],
       ),
     );
   }
