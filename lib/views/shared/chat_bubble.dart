@@ -99,6 +99,8 @@ class CustomChatBubble extends StatelessWidget {
                         ClipboardData(text: message.content!),
                       );
                       // ignore: use_build_context_synchronously
+                      Navigator.of(context).pop();
+                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           duration: Duration(milliseconds: 500),

@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:conversio/models/story.dart';
 import 'package:conversio/models/user.dart';
 import 'package:conversio/services/auth_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -57,10 +57,9 @@ class DatabaseService {
     final imgUrl = await ref.getDownloadURL();
     await AuthService.user!.updatePhotoURL(imgUrl);
     await firestore.collection(usersCollection).doc(AuthService.userid).update({
-      'imgUrl': imgUrl,
+      'profileImgUrl': imgUrl,
     });
   }
-
 
   Stream<ConversioUser> getUserInfo() {
     return firestore
@@ -137,19 +136,14 @@ class DatabaseService {
     }
   }
 
-  void uploadStory(Story? story) async {
-    final path =
-        'usersStories/${AuthService.user!.displayName}/${story!.imgUrl}';
-    final file = File(story.imgUrl!);
-    final ref = firebaseStorage.ref().child(path);
-    await ref.putFile(file);
-    final imgUrl = await ref.getDownloadURL();
-    Story storyUpload = story.copyWith(imgUrl: imgUrl);
-    firestore
-        .collection(usersCollection)
+  Stream<Message> getRecentMessage(String? id) {
+    return firestore
+        .collection('users')
         .doc(AuthService.userid)
-        .collection('stories')
-        .doc(storyUpload.id)
-        .set(storyUpload.toJson());
+        .collection('allMessages')
+        .doc('messagesWith$id')
+        .collection('messages')
+        .snapshots()
+        .map((snap) => Message.fromJson(snap.docs.last.data()));
   }
 }

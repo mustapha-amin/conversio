@@ -163,17 +163,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                       onPressed: () {
-                        formKey.currentState!.validate() ? authProvider
-                            .createAccount(
-                              context,
-                              _emailController.text,
-                              _passwordController.text,
-                            )
-                            .whenComplete(() =>
-                                Navigator.pushReplacement(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return const Wrapper();
-                                }))) : null;
+                        formKey.currentState!.validate()
+                            ? authProvider.createAccount(
+                                context,
+                                _emailController.text,
+                                _passwordController.text,
+                              )
+                            : null;
                       },
                       child: const Text("Create account"),
                     ),

@@ -1,3 +1,4 @@
+import 'package:conversio/utils/textstyle.dart';
 import 'package:flutter/material.dart';
 
 void showErrorDialog(BuildContext context, String? text) {
@@ -6,13 +7,19 @@ void showErrorDialog(BuildContext context, String? text) {
     builder: (context) {
       return AlertDialog(
         actionsAlignment: MainAxisAlignment.end,
-        content: Text(text!),
+        content: Text(
+          text!,
+          style: kTextStyle(context: context, size: 12),
+        ),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: const Text("Ok"),
+            child: Text(
+              "Ok",
+              style: kTextStyle(context: context, size: 10),
+            ),
           )
         ],
       );

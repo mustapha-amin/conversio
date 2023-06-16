@@ -24,6 +24,7 @@ class _UserProfileState extends State<UserProfile> {
   final TextEditingController bioController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   String? imageError = 'select an image';
+  bool loading = false;
 
   File? selectedImage;
 
@@ -48,127 +49,144 @@ class _UserProfileState extends State<UserProfile> {
       child: AuthService.user!.displayName != null
           ? const Home()
           : Scaffold(
-              resizeToAvoidBottomInset: false,
-              body: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Set up your profile",
-                        style: kTextStyle(
-                          context: context,
-                          size: 23.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
+              resizeToAvoidBottomInset: true,
+              body: loading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
                       ),
-                      addVerticalSpacing(10),
-                      Stack(
-                        children: [
-                          CircleAvatar(
-                              radius: 20.w,
-                              backgroundImage: selectedImage != null
-                                  ? FileImage(
-                                      selectedImage!,
-                                    )
-                                  : null,
-                              child: selectedImage == null
-                                  ? Icon(
-                                      Icons.person,
-                                      size: 20.w,
-                                      color: Colors.grey,
-                                    )
-                                  : null),
-                          Positioned(
-                            bottom: -4,
-                            right: -2,
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minWidth: 10.w,
-                                maxHeight: 10.h,
-                              ),
-                              child: IconButton(
-                                color: Colors.white,
-                                style: IconButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
+                    )
+                  : ListView(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 20),
+                          child: Form(
+                            key: formKey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Set up your profile",
+                                  style: kTextStyle(
+                                    context: context,
+                                    size: 23.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                icon: Icon(
-                                  Icons.camera_alt,
-                                  size: 8.w,
-                                ),
-                                onPressed: selectImage,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      addVerticalSpacing(10),
-                      TextFormField(
-                        style: kTextStyle(context: context, size: 12.sp),
-                        controller: usernameController,
-                        decoration: InputDecoration(
-                          hintText: "username",
-                          hintStyle: GoogleFonts.raleway(
-                            color: Colors.grey,
-                          ),
-                        ),
-                        validator: (val) =>
-                            val!.isEmpty ? "Please enter your user name" : null,
-                      ),
-                      addVerticalSpacing(5),
-                      TextFormField(
-                        style: kTextStyle(context: context, size: 12.sp),
-                        controller: bioController,
-                        maxLines: 2,
-                        decoration: InputDecoration(
-                          hintText: "bio",
-                          hintStyle: GoogleFonts.raleway(
-                            color: Colors.grey,
-                          ),
-                        ),
-                        validator: (val) =>
-                            val!.isEmpty ? "Please enter your user bio" : null,
-                      ),
-                      addVerticalSpacing(20.h),
-                      SizedBox(
-                        width: 100.w,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            formKey.currentState!.validate() &&
-                                    selectedImage != null
-                                ? databaseService
-                                    .createUser(ConversioUser(
-                                      id: AuthService.userid,
-                                      name: usernameController.text.trim(),
-                                      email: AuthService.user!.email,
-                                      bio: bioController.text.trim(),
-                                      profileImgUrl: selectedImage!.path,
-                                    ))
-                                    .whenComplete(() =>
-                                        Navigator.pushReplacement(context,
-                                            MaterialPageRoute(
-                                                builder: (context) {
-                                          return const Home();
-                                        })))
-                                : selectedImage == null
-                                    ? ScaffoldMessenger.of(context)
-                                        .showSnackBar(
-                                        SnackBar(
-                                          content: Text(imageError!),
+                                addVerticalSpacing(10),
+                                Stack(
+                                  children: [
+                                    CircleAvatar(
+                                        radius: 20.w,
+                                        backgroundImage: selectedImage != null
+                                            ? FileImage(
+                                                selectedImage!,
+                                              )
+                                            : null,
+                                        child: selectedImage == null
+                                            ? Icon(
+                                                Icons.person,
+                                                size: 20.w,
+                                                color: Colors.grey,
+                                              )
+                                            : null),
+                                    Positioned(
+                                      bottom: -4,
+                                      right: -2,
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          minWidth: 10.w,
+                                          maxHeight: 10.h,
                                         ),
-                                      )
-                                    : null;
-                          },
-                          child: const Text("Proceed"),
+                                        child: IconButton(
+                                          color: Colors.white,
+                                          style: IconButton.styleFrom(
+                                            backgroundColor: AppColors.primary,
+                                          ),
+                                          icon: Icon(
+                                            Icons.camera_alt,
+                                            size: 8.w,
+                                          ),
+                                          onPressed: selectImage,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                addVerticalSpacing(10),
+                                TextFormField(
+                                  style:
+                                      kTextStyle(context: context, size: 12.sp),
+                                  controller: usernameController,
+                                  decoration: InputDecoration(
+                                    hintText: "username",
+                                    hintStyle: GoogleFonts.raleway(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  validator: (val) => val!.isEmpty
+                                      ? "Please enter your user name"
+                                      : null,
+                                ),
+                                addVerticalSpacing(5),
+                                TextFormField(
+                                  style:
+                                      kTextStyle(context: context, size: 12.sp),
+                                  controller: bioController,
+                                  maxLines: 2,
+                                  decoration: InputDecoration(
+                                    hintText: "bio",
+                                    hintStyle: GoogleFonts.raleway(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  validator: (val) => val!.isEmpty
+                                      ? "Please enter your user bio"
+                                      : null,
+                                ),
+                                addVerticalSpacing(20.h),
+                                SizedBox(
+                                  width: 100.w,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      formKey.currentState!.validate() &&
+                                              selectedImage != null
+                                          ? databaseService
+                                              .createUser(ConversioUser(
+                                                id: AuthService.userid,
+                                                name: usernameController.text
+                                                    .trim(),
+                                                email: AuthService.user!.email,
+                                                bio: bioController.text.trim(),
+                                                profileImgUrl:
+                                                    selectedImage!.path,
+                                              )).then((value) => setState(() => loading = true))
+                                              .whenComplete(() =>
+                                                  Navigator.pushReplacement(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return const Home();
+                                                  })))
+                                          : selectedImage == null
+                                              ? ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(imageError!),
+                                                  ),
+                                                )
+                                              : null;
+                                    },
+                                    child: const Text("Proceed"),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                         ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
+                      ],
+                    ),
             ),
     );
   }

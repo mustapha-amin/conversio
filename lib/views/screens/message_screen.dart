@@ -33,7 +33,11 @@ class _MessageScreenState extends State<MessageScreen> {
     _scrollController = ScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        _scrollController.position.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.bounceIn,
+        );
       }
     });
     super.initState();
@@ -172,6 +176,7 @@ class _MessageScreenState extends State<MessageScreen> {
         ],
         centerTitle: true,
       ),
+      resizeToAvoidBottomInset: true,
       body: Column(
         children: [
           StreamBuilder<List<Message>>(
@@ -202,7 +207,10 @@ class _MessageScreenState extends State<MessageScreen> {
                 );
               } else {
                 return const Expanded(
-                    child: Center(child: CircularProgressIndicator()));
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
               }
             },
           ),

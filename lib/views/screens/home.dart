@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conversio/models/user.dart';
 import 'package:conversio/pallette.dart';
 import 'package:conversio/providers/auth_provider.dart';
@@ -6,6 +7,7 @@ import 'package:conversio/services/auth_service.dart';
 import 'package:conversio/services/database.dart';
 import 'package:conversio/utils/textstyle.dart';
 import 'package:conversio/views/screens/message_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -58,47 +60,6 @@ class _HomeState extends State<Home> {
                         ))
                       : Column(
                           children: [
-                            SizedBox(
-                              height: 9.h,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 10,
-                                  right: 10,
-                                ),
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: [
-                                    Stack(
-                                      children: [
-                                        CircleAvatar(
-                                          radius: 8.w,
-                                          backgroundImage: NetworkImage(
-                                            AuthService.user!.photoURL!,
-                                          ),
-                                        ),
-                                        Positioned(
-                                          bottom: 0,
-                                          right: 1,
-                                          child: Container(
-                                            width: 5.w,
-                                            height: 5.w,
-                                            decoration: const BoxDecoration(
-                                              color: AppColors.accent,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Icon(
-                                              Icons.add,
-                                              size: 4.w,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
                             Expanded(
                               child: ListView.builder(
                                 itemCount: users.length,
