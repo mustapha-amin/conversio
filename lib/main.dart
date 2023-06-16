@@ -38,6 +38,7 @@ Future<void> main() async {
         builder: (context, _, __) {
           var themeStatus = Provider.of<ThemeProvider>(context).isDark;
           return MaterialApp(
+            
             debugShowCheckedModeBanner: false,
             home: const Wrapper(),
             theme: AppTheme.themeData(themeStatus, context),

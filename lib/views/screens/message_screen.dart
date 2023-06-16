@@ -34,7 +34,7 @@ class _MessageScreenState extends State<MessageScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.position.animateTo(
-          _scrollController.position.maxScrollExtent,
+          _scrollController.position.maxScrollExtent + 300,
           duration: const Duration(milliseconds: 300),
           curve: Curves.bounceIn,
         );
@@ -50,53 +50,7 @@ class _MessageScreenState extends State<MessageScreen> {
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
-            showModalBottomSheet(
-              backgroundColor:
-                  themeprovider.isDark ? Colors.grey[900] : Colors.grey[100],
-              context: context,
-              builder: (context) {
-                return SizedBox(
-                  height: 50.h,
-                  width: 100.w,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return FullScreenImage(
-                                user: widget.user,
-                                heroTag: widget.user!.id,
-                              );
-                            }));
-                          },
-                          child: Hero(
-                            transitionOnUserGestures: true,
-                            tag: widget.user!.id!,
-                            child: CircleAvatar(
-                              radius: 15.w,
-                              backgroundImage:
-                                  NetworkImage(widget.user!.profileImgUrl!),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '@${widget.user!.name!}',
-                        style: kTextStyle(context: context, size: 15),
-                      ),
-                      addVerticalSpacing(4.h),
-                      Text(
-                        widget.user!.bio!,
-                        style: kTextStyle(context: context, size: 18),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
+            modalSheet(themeprovider, context);
           },
           child: Row(
             children: [
@@ -194,6 +148,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 7),
                           child: ListView.builder(
+                            physics: const ClampingScrollPhysics(),
                             controller: _scrollController,
                             itemCount: snapshot.data!.length,
                             itemBuilder: (context, index) {
@@ -217,6 +172,15 @@ class _MessageScreenState extends State<MessageScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
+              onTap: () async {
+                await Future.delayed(
+                    const Duration(seconds: 1),
+                    () => _scrollController.position.animateTo(
+                          _scrollController.position.maxScrollExtent + 300,
+                          duration: const Duration(milliseconds: 100),
+                          curve: Curves.bounceIn,
+                        ));
+              },
               style: GoogleFonts.raleway(
                 fontSize: 14.sp,
                 color: Colors.black,
@@ -251,14 +215,19 @@ class _MessageScreenState extends State<MessageScreen> {
                   onPressed: () {
                     messageController.text.isEmpty
                         ? null
-                        : DatabaseService().sendMessage(
-                            Message(
-                              content: messageController.text,
-                              senderId: AuthService.userid,
-                              receiverId: widget.user!.id,
-                              timeSent: DateTime.now(),
+                        : {
+                            DatabaseService().sendMessage(
+                              Message(
+                                content: messageController.text,
+                                senderId: AuthService.userid,
+                                receiverId: widget.user!.id,
+                                timeSent: DateTime.now(),
+                              ),
                             ),
-                          );
+                            _scrollController.position.jumpTo(
+                              _scrollController.position.maxScrollExtent + 300,
+                            )
+                          };
                     messageController.clear();
                   },
                   icon: const Icon(
@@ -272,6 +241,57 @@ class _MessageScreenState extends State<MessageScreen> {
           )
         ],
       ),
+    );
+  }
+
+  Future<dynamic> modalSheet(
+      ThemeProvider themeprovider, BuildContext context) {
+    return showModalBottomSheet(
+      backgroundColor:
+          themeprovider.isDark ? Colors.grey[900] : Colors.grey[100],
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: 50.h,
+          width: 100.w,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return FullScreenImage(
+                        user: widget.user,
+                        heroTag: widget.user!.id,
+                      );
+                    }));
+                  },
+                  child: Hero(
+                    transitionOnUserGestures: true,
+                    tag: widget.user!.id!,
+                    child: CircleAvatar(
+                      radius: 15.w,
+                      backgroundImage:
+                          NetworkImage(widget.user!.profileImgUrl!),
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                '@${widget.user!.name!}',
+                style: kTextStyle(context: context, size: 15),
+              ),
+              addVerticalSpacing(4.h),
+              Text(
+                widget.user!.bio!,
+                style: kTextStyle(context: context, size: 18),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

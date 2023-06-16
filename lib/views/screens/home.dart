@@ -1,16 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conversio/models/user.dart';
-import 'package:conversio/pallette.dart';
-import 'package:conversio/providers/auth_provider.dart';
 import 'package:conversio/providers/theme_provider.dart';
-import 'package:conversio/services/auth_service.dart';
 import 'package:conversio/services/database.dart';
 import 'package:conversio/utils/textstyle.dart';
-import 'package:conversio/views/screens/message_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:sizer/sizer.dart';
 import '../shared/chat_tile.dart';
 import '../shared/drawer.dart';
 
@@ -44,6 +38,14 @@ class _HomeState extends State<Home> {
                   ),
                 );
               }),
+              title: Text(
+                "Conversio",
+                style: kTextStyle(
+                  context: context,
+                  size: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             ),
             drawer: HomeDrawer(user: user),

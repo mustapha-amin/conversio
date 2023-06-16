@@ -123,7 +123,7 @@ class DatabaseService {
     await doc.delete();
   }
 
-  void clearChat(String? receiverId) async {
+  Future<void> clearChat(String? receiverId) async {
     final collection = await firestore
         .collection(usersCollection)
         .doc(AuthService.userid)
@@ -131,9 +131,8 @@ class DatabaseService {
         .doc('messagesWith$receiverId')
         .collection('messages')
         .get();
-    for (var doc in collection.docs) {
-      await doc.reference.delete();
-    }
+
+    await Future.wait(collection.docs.map((doc) => doc.reference.delete()));
   }
 
   Stream<Message> getRecentMessage(String? id) {
