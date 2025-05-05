@@ -2,7 +2,8 @@ import 'dart:developer';
 
 import 'package:conversio/models/user.dart';
 import 'package:conversio/services/database.dart';
-import 'package:conversio/views/screens/home.dart';
+import 'package:conversio/views/screens/chatscreen.dart';
+import 'package:conversio/views/screens/nav_bar.dart';
 import 'package:flutter/material.dart';
 
 class DbProvider extends ChangeNotifier {
@@ -25,7 +26,7 @@ class DbProvider extends ChangeNotifier {
       if (context.mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Home()),
+          MaterialPageRoute(builder: (context) => const NavBar()),
         );
       }
     } catch (e) {

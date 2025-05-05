@@ -1,4 +1,5 @@
 import 'package:conversio/providers/db_provider.dart';
+import 'package:conversio/providers/message_provider.dart';
 import 'package:conversio/services/database.dart';
 import 'models/user.dart';
 import 'package:conversio/providers/auth_provider.dart';
@@ -36,6 +37,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => DbProvider(),
+        ),
+         ChangeNotifierProvider(
+          create: (_) => MessageProvider(),
         ),
       ],
       child: Sizer(

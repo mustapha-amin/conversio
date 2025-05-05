@@ -6,6 +6,7 @@ import 'package:conversio/services/auth_service.dart';
 import 'package:conversio/services/database.dart';
 import 'package:conversio/utils/spacing.dart';
 import 'package:conversio/utils/textstyle.dart';
+import 'package:conversio/views/screens/nav_bar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -15,7 +16,7 @@ import 'package:sizer/sizer.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'dart:developer';
-import '../home.dart';
+import '../chatscreen.dart';
 
 class UserProfile extends StatefulWidget {
   const UserProfile({super.key});
@@ -53,10 +54,12 @@ class _UserProfileState extends State<UserProfile> {
       stream: DatabaseService().getUserInfo(),
       builder: (context, snapshot) {
         return snapshot.hasData
-            ? Home()
+            ? NavBar()
             : snapshot.connectionState == ConnectionState.waiting
-            ? Center(
-              child: SpinKitWaveSpinner(size: 80, color: AppColors.primary),
+            ? Scaffold(
+              body: Center(
+                child: SpinKitWaveSpinner(size: 80, color: AppColors.primary),
+              ),
             )
             : Scaffold(
               resizeToAvoidBottomInset: true,

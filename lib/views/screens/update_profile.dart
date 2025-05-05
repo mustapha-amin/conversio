@@ -10,7 +10,7 @@ import '../../services/auth_service.dart';
 import '../../services/database.dart';
 import '../../utils/spacing.dart';
 import '../../utils/textstyle.dart';
-import 'home.dart';
+import 'chatscreen.dart';
 
 class UpdateProfile extends StatefulWidget {
   ConversioUser? user;

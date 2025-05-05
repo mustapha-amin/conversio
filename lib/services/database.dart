@@ -73,10 +73,10 @@ class DatabaseService {
     });
   }
 
-  Stream<ConversioUser> getUserInfo() {
+  Stream<ConversioUser> getUserInfo({String? uid}) {
     return firestore
         .collection(usersCollection)
-        .doc(AuthService.userid)
+        .doc(uid ?? AuthService.userid)
         .snapshots()
         .map((e) => ConversioUser.fromJson(e.data()!));
   }
@@ -94,74 +94,5 @@ class DatabaseService {
         );
   }
 
-  Future<void> sendMessage(Message message) async {
-    message.id = DateTime.now().microsecondsSinceEpoch.toString();
-    // sender
-    await firestore
-        .collection(usersCollection)
-        .doc(message.senderId)
-        .collection('allMessages')
-        .doc('messagesWith${message.receiverId}')
-        .collection('messages')
-        .doc(message.id)
-        .set(message.toJson());
-
-    // receiver
-    await firestore
-        .collection(usersCollection)
-        .doc(message.receiverId)
-        .collection('allMessages')
-        .doc('messagesWith${message.senderId}')
-        .collection('messages')
-        .doc(message.id)
-        .set(message.toJson());
-  }
-
-  Stream<List<Message>> getMessages(String? receiverId) {
-    return firestore
-        .collection(usersCollection)
-        .doc(AuthService.userid)
-        .collection('allMessages')
-        .doc('messagesWith$receiverId')
-        .collection('messages')
-        .snapshots()
-        .map(
-          (snap) => snap.docs.map((e) => Message.fromJson(e.data())).toList(),
-        );
-  }
-
-  Future<void> deleteMessage(Message message) async {
-    final doc = firestore
-        .collection(usersCollection)
-        .doc(AuthService.userid)
-        .collection('allMessages')
-        .doc('messagesWith${message.receiverId}')
-        .collection('messages')
-        .doc(message.id);
-    await doc.delete();
-  }
-
-  Future<void> clearChat(String? receiverId) async {
-    final collection =
-        await firestore
-            .collection(usersCollection)
-            .doc(AuthService.userid)
-            .collection('allMessages')
-            .doc('messagesWith$receiverId')
-            .collection('messages')
-            .get();
-
-    await Future.wait(collection.docs.map((doc) => doc.reference.delete()));
-  }
-
-  Stream<Message> getRecentMessage(String? id) {
-    return firestore
-        .collection('users')
-        .doc(AuthService.userid)
-        .collection('allMessages')
-        .doc('messagesWith$id')
-        .collection('messages')
-        .snapshots()
-        .map((snap) => Message.fromJson(snap.docs.last.data()));
-  }
+  
 }

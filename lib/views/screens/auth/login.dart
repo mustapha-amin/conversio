@@ -6,6 +6,7 @@ import 'package:conversio/utils/spacing.dart';
 import 'package:conversio/utils/textstyle.dart';
 import 'package:conversio/views/screens/auth/user_profile.dart';
 import 'package:conversio/views/screens/auth/wrapper.dart';
+import 'package:conversio/views/shared/loader.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -53,9 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body:
           authProvider.loadingStatus == true
-              ? const Center(
-                child: SpinKitWaveSpinner(size: 80, color: AppColors.primary),
-              )
+              ? const Loader()
               : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Form(
