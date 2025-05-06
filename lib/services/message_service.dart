@@ -1,12 +1,15 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conversio/models/chat.dart';
 import 'package:conversio/models/message.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
 
 class MessageService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   static final MessageService _instance = MessageService._internal();
 
   MessageService._internal();
@@ -142,6 +145,16 @@ class MessageService {
 
   Future<Chat> createChat(Chat chat) async {
     try {
+      if (chat.isGroup) {
+        final metadata = SettableMetadata();
+        final storageRef = _firebaseStorage.ref().child(
+          'group_chats/${chat.id}/profile_image.jpg',
+        );
+        final file = File(chat.imageUrl!);
+        final uploadTask = await storageRef.putFile(file, metadata);
+        final downloadUrl = await uploadTask.ref.getDownloadURL();
+        chat = chat.copyWith(imageUrl: downloadUrl);
+      }
       await _firestore.collection("chats").doc(chat.id).set(chat.toJson());
       return chat;
     } on Exception catch (e) {
@@ -154,6 +167,7 @@ class MessageService {
     return _firestore
         .collection("chats")
         .where('members', arrayContains: uid)
+        .where('isGroup', isEqualTo: false)
         .orderBy('lastMessageTimestamp', descending: true)
         .snapshots()
         .map(
@@ -162,17 +176,34 @@ class MessageService {
         );
   }
 
-   Stream<List<Chat>?> getGroupChats(String uid) {
+  Stream<List<Chat>?> getGroupChats(String uid) {
     return _firestore
         .collection("chats")
         .where('members', arrayContains: uid)
         .where('isGroup', isEqualTo: true)
-        .orderBy('lastMessageTimestamp', descending: true)
+        .orderBy('createdAt', descending: true)
         .snapshots()
         .map(
           (snapshot) =>
               snapshot.docs.map((doc) => Chat.fromJson(doc.data())).toList(),
         );
+  }
+
+  Stream<Chat?> getChatWithUser(String currentUserId, String otherUserId) {
+    return _firestore
+        .collection("chats")
+        .where('members', arrayContains: currentUserId)
+        .where('isGroup', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) {
+          for (var doc in snapshot.docs) {
+            final chat = Chat.fromJson(doc.data());
+            if (chat.members.contains(otherUserId)) {
+              return chat;
+            }
+          }
+          return null;
+        });
   }
 
   Future<void> addParticipant(String chatId, String uid) async {

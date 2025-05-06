@@ -42,4 +42,9 @@ class ConversioUser {
       profileImgUrl: profileImgUrl ?? profileImgUrl,
     );
   }
+
+  @override
+  String toString() {
+    return 'ConversioUser(id: $id, name: $name, email: $email, bio: $bio, profileImgUrl: $profileImgUrl)';
+  }
 }

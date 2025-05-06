@@ -15,10 +15,18 @@ class ChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () => context.push(MessageScreen(chat: chat, user: user)),
-      leading: CircleAvatar(backgroundImage: NetworkImage(user!.profileImgUrl!)),
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(
+          chat!.isGroup ? chat!.imageUrl! : user!.profileImgUrl!,
+        ),
+      ),
       title: chat!.isGroup ? Text(chat!.name!) : Text(user!.name!),
-      subtitle: Text(chat!.lastMessage!),
-      trailing: Text(intl.DateFormat.Hms().format(chat!.lastMessageTimestamp!)),
+      subtitle: Text(chat!.lastMessage ?? ''),
+      trailing: Text(
+        chat!.lastMessageTimestamp == null
+            ? ''
+            : intl.DateFormat.Hms().format(chat!.lastMessageTimestamp!),
+      ),
     );
   }
 }

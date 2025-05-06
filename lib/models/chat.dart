@@ -35,25 +35,27 @@ class Chat {
     this.imageUrl,
   });
   factory Chat.fromJson(Map<String, dynamic> json) {
-  try {
-    return Chat(
-      id: json['id'] as String,
-      isGroup: json['isGroup'] as bool,
-      members: List<String>.from(json['members'] ?? []),
-      name: json['name'] as String?,
-      lastMessage: json['lastMessage'] as String?,
-      lastMessageTimestamp: (json['lastMessageTimestamp'] as Timestamp?)?.toDate(),
-      createdBy: json['createdBy'] as String?,
-      createdAt: (json['createdAt'] as Timestamp?)?.toDate(), // Fixed parsing
-      admins: json['admins'] != null ? List<String>.from(json['admins']) : null,
-      description: json['description'] as String?,
-      imageUrl: json['imageUrl'] as String?,
-    );
-  } catch (e) {
-    print('Error parsing Chat: $e, JSON: $json');
-    rethrow; // Log and rethrow for debugging
+    try {
+      return Chat(
+        id: json['id'] as String,
+        isGroup: json['isGroup'] as bool,
+        members: List<String>.from(json['members'] ?? []),
+        name: json['name'] as String?,
+        lastMessage: json['lastMessage'] as String?,
+        lastMessageTimestamp:
+            (json['lastMessageTimestamp'] as Timestamp?)?.toDate(),
+        createdBy: json['createdBy'] as String?,
+        createdAt: (json['createdAt'] as Timestamp?)?.toDate(), // Fixed parsing
+        admins:
+            json['admins'] != null ? List<String>.from(json['admins']) : null,
+        description: json['description'] as String?,
+        imageUrl: json['imageUrl'] as String?,
+      );
+    } catch (e) {
+      print('Error parsing Chat: $e, JSON: $json');
+      rethrow; // Log and rethrow for debugging
+    }
   }
-}
 
   Map<String, dynamic> toJson() {
     return {
@@ -69,6 +71,23 @@ class Chat {
       'description': description,
       'imageUrl': imageUrl,
     };
+  }
+
+  @override
+  String toString() {
+    return '''Chat(
+      id: $id,
+      isGroup: $isGroup,
+      name: $name,
+      description: $description,
+      members: ${members.length} (${members.join(', ')}),
+      admins: ${admins?.join(', ') ?? 'none'},
+      createdBy: $createdBy,
+      createdAt: $createdAt,
+      lastMessage: $lastMessage,
+      lastMessageTimestamp: $lastMessageTimestamp,
+      imageUrl: $imageUrl
+    )''';
   }
 
   Chat copyWith({

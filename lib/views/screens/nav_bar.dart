@@ -3,9 +3,10 @@ import 'package:conversio/utils/extensions.dart';
 import 'package:conversio/utils/textstyle.dart';
 import 'package:conversio/views/screens/chatscreen.dart';
 import 'package:conversio/views/screens/conversio_users.dart';
-import 'package:conversio/views/screens/groupchat.dart';
+import 'package:conversio/views/shared/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -21,7 +22,9 @@ class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: HomeDrawer(),
       appBar: AppBar(
+        
         leading: Builder(
           builder: (context) {
             return IconButton(
@@ -29,7 +32,7 @@ class _NavBarState extends State<NavBar> {
                 Scaffold.of(context).openDrawer();
               },
               icon: Icon(
-                Icons.menu_rounded,
+                Iconsax.menu,
                 color:
                     context.watch<ThemeProvider>().isDark
                         ? Colors.white
@@ -57,15 +60,18 @@ class _NavBarState extends State<NavBar> {
           });
         },
         destinations: [
-          NavigationDestination(icon: Icon(Icons.chat_bubble), label: "Chats"),
-          NavigationDestination(icon: Icon(Icons.group), label: "Group Chats"),
+          NavigationDestination(icon: Icon(Iconsax.message), label: "Chats"),
+          NavigationDestination(
+            icon: Icon(Iconsax.people),
+            label: "Group Chats",
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          index == 0 ? context.push(ConversioUsersScreen()) : null;
+          context.push(ConversioUsersScreen());
         },
-        child: Icon(index == 0 ? Icons.chat_bubble : Icons.add),
+        child: Icon(Iconsax.message),
       ),
     );
   }
