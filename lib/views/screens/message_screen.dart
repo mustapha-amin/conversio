@@ -8,6 +8,7 @@ import 'package:conversio/services/auth_service.dart';
 import 'package:conversio/services/message_service.dart';
 import 'package:conversio/utils/extensions.dart';
 import 'package:conversio/utils/textstyle.dart';
+import 'package:conversio/views/screens/chat_info_screen.dart';
 import 'package:conversio/views/shared/chat_bubble.dart';
 import 'package:conversio/views/shared/error_dialog.dart';
 import 'package:conversio/views/shared/loader.dart';
@@ -60,39 +61,37 @@ class _MessageScreenState extends State<MessageScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            if (widget.user != null) ...[
-              InkWell(
-                onTap: () => log(widget.user.toString()),
-                child: ClipOval(
-                  child: Image.network(
-                    widget.user!.profileImgUrl!,
-                    width: 40,
-                    errorBuilder: (_, __, ___) => const Icon(Iconsax.user),
+        title: InkWell(
+          onTap:
+              () => context.push(
+                ChatInfoScreen(chat: _currentChat, user: widget.user),
+              ),
+          child: Row(
+            children: [
+              if (widget.user != null) ...[
+                InkWell(
+                  onTap: () => log(widget.user.toString()),
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(widget.user!.profileImgUrl!),
                   ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                widget.user?.name ?? 'Unknown User',
-                style: kTextStyle(context: context, size: 20),
-              ),
-            ] else if (_currentChat != null) ...[
-              ClipOval(
-                child: Image.network(
-                  _currentChat!.imageUrl ?? '',
-                  width: 40,
-                  errorBuilder: (_, __, ___) => const Icon(Iconsax.people),
+                const SizedBox(width: 8),
+                Text(
+                  widget.user?.name ?? 'Unknown User',
+                  style: kTextStyle(context: context, size: 20),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                _currentChat?.name ?? 'Group Chat',
-                style: kTextStyle(context: context, size: 20),
-              ),
+              ] else if (_currentChat != null) ...[
+                CircleAvatar(
+                  backgroundImage: NetworkImage(_currentChat!.imageUrl ?? ''),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  _currentChat?.name ?? 'Group Chat',
+                  style: kTextStyle(context: context, size: 20),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
       body: Column(
@@ -132,7 +131,10 @@ class _MessageScreenState extends State<MessageScreen> {
                                   itemCount: snap.data!.length,
                                   itemBuilder: (ctx, index) {
                                     final message = snap.data![index];
-                                    return ChatBubble(message: message);
+                                    return ChatBubble(
+                                      message: message,
+                                      chat: _currentChat!,
+                                    );
                                   },
                                 );
                               } else if (!snap.hasData) {
@@ -169,7 +171,10 @@ class _MessageScreenState extends State<MessageScreen> {
                             itemCount: snap.data!.length,
                             itemBuilder: (ctx, index) {
                               final message = snap.data![index];
-                              return ChatBubble(message: message);
+                              return ChatBubble(
+                                message: message,
+                                chat: _currentChat!,
+                              );
                             },
                           );
                         } else if (!snap.hasData) {

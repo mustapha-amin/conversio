@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:conversio/models/chat.dart';
 import 'package:conversio/providers/message_provider.dart';
 import 'package:conversio/utils/textstyle.dart';
+import 'package:conversio/utils/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:conversio/views/screens/message_screen.dart';
 
 class GroupCreationSheet extends StatefulWidget {
   final List<String> selectedUsers;
@@ -34,7 +36,7 @@ class _GroupCreationSheetState extends State<GroupCreationSheet> {
     }
   }
 
-  void _createGroup() {
+  void _createGroup() async {
     if (_formKey.currentState!.validate()) {
       if (_groupImage == null) {
         ScaffoldMessenger.of(
@@ -58,9 +60,20 @@ class _GroupCreationSheetState extends State<GroupCreationSheet> {
         imageUrl: _groupImage!.path,
       );
 
-      context.read<MessageProvider>().createGChat(context, chat);
-      
-      
+      // Close the modal sheet first
+      Navigator.pop(context);
+
+      try {
+        final newChat = await context.read<MessageProvider>().createGChat(
+          context,
+          chat,
+        );
+        if (context.mounted) {
+          context.replace(MessageScreen(chat: newChat));
+        }
+      } catch (e) {
+        // Error is already handled in the provider
+      }
     }
   }
 

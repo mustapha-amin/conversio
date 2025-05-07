@@ -21,7 +21,7 @@ class ChatTile extends StatelessWidget {
         ),
       ),
       title: chat!.isGroup ? Text(chat!.name!) : Text(user!.name!),
-      subtitle: Text(chat!.lastMessage ?? ''),
+      subtitle: Text(chat!.lastMessage ?? 'Send a message'),
       trailing: Text(
         chat!.lastMessageTimestamp == null
             ? ''

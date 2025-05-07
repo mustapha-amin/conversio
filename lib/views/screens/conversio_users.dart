@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:conversio/pallette.dart';
 import 'package:conversio/providers/message_provider.dart';
 import 'package:conversio/services/database.dart';
@@ -159,7 +161,9 @@ class _ConversioUsersScreenState extends State<ConversioUsersScreen> {
               groupSelected & users.isNotEmpty
                   ? FloatingActionButton(
                     onPressed:
-                        users.isNotEmpty ? _showGroupDetailsDialog : null,
+                        users.isNotEmpty
+                            ? () => _showGroupDetailsDialog()
+                            : null,
                     child: Icon(Iconsax.arrow_circle_right_copy),
                   )
                   : SizedBox(),

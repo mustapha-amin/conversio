@@ -35,17 +35,18 @@ class MessageProvider extends ChangeNotifier {
     }
   }
 
-  void createGChat(BuildContext context, Chat chat) async {
+  Future<Chat> createGChat(BuildContext context, Chat chat) async {
     try {
       toggleLoading(true);
       final newChat = await messageService.createChat(chat);
       toggleLoading(false);
-      if (context.mounted) context.replace(MessageScreen(chat: newChat));
+      return newChat;
     } catch (e) {
       toggleLoading(false);
       if (context.mounted) {
         showErrorDialog(context, "Unable to create group chat");
       }
+      rethrow;
     }
   }
 }

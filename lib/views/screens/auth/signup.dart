@@ -79,155 +79,167 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TextFormField(
-                              controller: _emailController,
-                              keyboardType: TextInputType.emailAddress,
-                              style: kTextStyle(context: context, size: 15),
-                              textInputAction: TextInputAction.next,
-                              onSaved: (_) {
-                                scrollController.jumpTo(
-                                  scrollController.position.maxScrollExtent,
-                                );
-                              },
-                              decoration: InputDecoration(
-                                hintText: "e.g johndoe@gmail.com",
-                                hintStyle: GoogleFonts.raleway(
-                                  color: Colors.grey,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              validator:
-                                  (val) =>
-                                      val!.isEmpty
-                                          ? "please enter your email"
-                                          : null,
-                            ),
-                            addVerticalSpacing(10),
-                            ValueListenableBuilder(
-                              valueListenable: isObscureA,
-                              builder: (context, value, child) {
-                                return TextFormField(
-                                  controller: _passwordController,
-                                  focusNode: focusNode,
-                                  obscureText: value,
-                                  textInputAction: TextInputAction.next,
-                                  style: kTextStyle(context: context, size: 15),
-                                  decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        toggleObscureA();
-                                      },
-                                      icon: Icon(
-                                        value
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                      ),
-                                    ),
-                                    hintText: "password",
-                                    hintStyle: GoogleFonts.raleway(
-                                      color: Colors.grey,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
+                        AutofillGroup(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextFormField(
+                                autofillHints: [AutofillHints.email],
+                                controller: _emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                style: kTextStyle(context: context, size: 15),
+                                textInputAction: TextInputAction.next,
+                                onSaved: (_) {
+                                  scrollController.jumpTo(
+                                    scrollController.position.maxScrollExtent,
+                                  );
+                                },
+                                decoration: InputDecoration(
+                                  hintText: "e.g johndoe@gmail.com",
+                                  hintStyle: GoogleFonts.raleway(
+                                    color: Colors.grey,
                                   ),
-                                  validator:
-                                      (val) =>
-                                          val!.isEmpty
-                                              ? "please enter your password"
-                                              : null,
-                                );
-                              },
-                            ),
-                            addVerticalSpacing(10),
-                            ValueListenableBuilder(
-                              valueListenable: isObscureB,
-                              builder: (context, value, child) {
-                                return TextFormField(
-                                  controller: _confirmPasswordController,
-                                  obscureText: value,
-                                  focusNode: focusNode2,
-                                  style: kTextStyle(context: context, size: 15),
-                                  decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        toggleObscureB();
-                                      },
-                                      icon: Icon(
-                                        value
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                      ),
-                                    ),
-                                    hintText: "confirm password",
-                                    hintStyle: GoogleFonts.raleway(
-                                      color: Colors.grey,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                  ),
-                                  validator:
-                                      (val) =>
-                                          val! != _passwordController.text
-                                              ? "passwords do not match"
-                                              : null,
-                                );
-                              },
-                            ),
-                            addVerticalSpacing(30),
-                            ElevatedButton(
-                              style: Theme.of(
-                                context,
-                              ).elevatedButtonTheme.style!.copyWith(
-                                minimumSize: WidgetStatePropertyAll(
-                                  Size(100.w, 50),
-                                ),
-                                shape: WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(
+                                  border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                 ),
+                                validator:
+                                    (val) =>
+                                        val!.isEmpty
+                                            ? "please enter your email"
+                                            : null,
                               ),
-                              onPressed: () {
-                                formKey.currentState!.validate()
-                                    ? authProvider.createAccount(
-                                      context,
-                                      _emailController.text,
-                                      _passwordController.text,
-                                    )
-                                    : null;
-                              },
-                              child: const Text("Create account"),
-                            ),
-                            addVerticalSpacing(30),
-                            RichText(
-                              text: TextSpan(
-                                text: "Already have an account?",
-                                style: kTextStyle(context: context, size: 14),
-                                children: [
-                                  TextSpan(
-                                    recognizer:
-                                        TapGestureRecognizer()
-                                          ..onTap = () {
-                                            context.read<AuthStatus>().toggle();
-                                          },
+                              addVerticalSpacing(10),
+                              ValueListenableBuilder(
+                                valueListenable: isObscureA,
+                                builder: (context, value, child) {
+                                  return TextFormField(
+                                    autofillHints: [AutofillHints.password],
+                                    controller: _passwordController,
+                                    focusNode: focusNode,
+                                    obscureText: value,
+                                    textInputAction: TextInputAction.next,
                                     style: kTextStyle(
                                       context: context,
-                                      size: 14,
-                                      color: AppColors.accent,
+                                      size: 15,
                                     ),
-                                    text: " Sign in",
-                                  ),
-                                ],
+                                    decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          toggleObscureA();
+                                        },
+                                        icon: Icon(
+                                          value
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                        ),
+                                      ),
+                                      hintText: "password",
+                                      hintStyle: GoogleFonts.raleway(
+                                        color: Colors.grey,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                    ),
+                                    validator:
+                                        (val) =>
+                                            val!.isEmpty
+                                                ? "please enter your password"
+                                                : null,
+                                  );
+                                },
                               ),
-                            ),
-                          ],
+                              addVerticalSpacing(10),
+                              ValueListenableBuilder(
+                                valueListenable: isObscureB,
+                                builder: (context, value, child) {
+                                  return TextFormField(
+                                    controller: _confirmPasswordController,
+                                    obscureText: value,
+                                    focusNode: focusNode2,
+                                    style: kTextStyle(
+                                      context: context,
+                                      size: 15,
+                                    ),
+                                    decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          toggleObscureB();
+                                        },
+                                        icon: Icon(
+                                          value
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                        ),
+                                      ),
+                                      hintText: "confirm password",
+                                      hintStyle: GoogleFonts.raleway(
+                                        color: Colors.grey,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                    ),
+                                    validator:
+                                        (val) =>
+                                            val! != _passwordController.text
+                                                ? "passwords do not match"
+                                                : null,
+                                  );
+                                },
+                              ),
+                              addVerticalSpacing(30),
+                              ElevatedButton(
+                                style: Theme.of(
+                                  context,
+                                ).elevatedButtonTheme.style!.copyWith(
+                                  minimumSize: WidgetStatePropertyAll(
+                                    Size(100.w, 50),
+                                  ),
+                                  shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  formKey.currentState!.validate()
+                                      ? authProvider.createAccount(
+                                        context,
+                                        _emailController.text,
+                                        _passwordController.text,
+                                      )
+                                      : null;
+                                },
+                                child: const Text("Create account"),
+                              ),
+                              addVerticalSpacing(30),
+                              RichText(
+                                text: TextSpan(
+                                  text: "Already have an account?",
+                                  style: kTextStyle(context: context, size: 14),
+                                  children: [
+                                    TextSpan(
+                                      recognizer:
+                                          TapGestureRecognizer()
+                                            ..onTap = () {
+                                              context
+                                                  .read<AuthStatus>()
+                                                  .toggle();
+                                            },
+                                      style: kTextStyle(
+                                        context: context,
+                                        size: 14,
+                                        color: AppColors.accent,
+                                      ),
+                                      text: " Sign in",
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
